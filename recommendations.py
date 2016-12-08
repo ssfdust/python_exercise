@@ -71,3 +71,38 @@ def topMatch(prefs, person, n = 5, similarity=sim_pearson):
             for other in prefs if other != person]
     scores.sort(reverse=True)
     return scores[0:n]
+
+def getRecommendations(prefs, person, similarity=sim_pearson):
+    """ To get the weighted arithmetic mean from all the 
+    persons
+    :prefs: all preferences
+    :person: person to be recommended
+    :similarity: similarity function
+    :returns: recommendations
+
+    """
+    totals = {}
+    simSums = {}
+    for other in prefs:
+        # Never compare to oneself
+        if other == person: continue
+        sim = similarity(prefs, person, other)
+
+        # Ignore the condition that 
+        if sim <= 0 : continue
+        for item in prefs[other]:
+
+            if item not in prefs[person] or prefs[person][item] == 0:
+                totals.setdefault(item, 0)
+                totals[item] += prefs[other][item] * sim
+
+                simSums.setdefault(item, 0)
+                simSums[item] += sim
+
+    rankings = [(total / simSums[item], item) for item,total in totals.items()]
+
+    rankings.sort(reverse=True)
+    return rankings
+
+
+        
