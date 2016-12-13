@@ -33,7 +33,7 @@ def getwords(html):
 
     reg_words = re.compile(r'[^A-Z^a-z]+')
     sep = re.search(reg_words, html).group()
-    print(sep)
+    print("sep = {}" % sep)
     words = txt.split(sep)
     print(words)
 
