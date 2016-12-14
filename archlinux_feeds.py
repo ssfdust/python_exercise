@@ -31,20 +31,42 @@ class feed_url_parser(HTMLParser):
         if self.processing == 1:
             self.processing = 0
 
-def get_feed(html):
-    parser = feed_url_parser()
-    parser.feed(html)
-    url_head = "https://www.archlinux.org"
-    urls = parser.urls
-    urls_copy = urls
-    url_regex = re.compile(r'^http[s]:\/\/.*', re.DOTALL)
-    for i, url in enumerate(urls):
-        if not re.search(url_regex, url):
-            urls_copy[i] = url_head + url
-            
-    return urls_copy
 
-def get_content(url):
-    archfeed = requests.get(url)
-    html = archfeed.text
-    return html
+class Archlinux_feeds(object):
+
+    """Docstring for Archlinux_feeds. """
+
+    def __init__(self):
+        """TODO: to be defined1. """
+        self.url = ''
+
+    @property
+    def feeds(self):
+        return self.data
+
+    @feeds.setter
+    def feeds(self, url):
+        self.url = url
+        print(url)
+        page_data = self.get_content(url)
+        self.data = (feed_url for feed_url in self.get_feed_urls(page_data))
+        
+    def get_feed_urls(html):
+        parser = feed_url_parser()
+        parser.feed(html)
+        url_head = "https://www.archlinux.org"
+        urls = parser.urls
+        urls_copy = urls
+        url_regex = re.compile(r'^http[s]:\/\/.*', re.DOTALL)
+        for i, url in enumerate(urls):
+            if not re.search(url_regex, url):
+                urls_copy[i] = url_head + url
+                
+        return urls_copy
+
+    def get_content(url):
+        archfeed = requests.get(url)
+        archfeed.encoding = 'utf-8'
+        html = archfeed.text
+        return html
+

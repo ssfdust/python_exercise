@@ -1,4 +1,5 @@
 import feedparser
+from archlinux_feeds import Archlinux_feeds
 import re
 
 def getwordcounts(url):
@@ -33,9 +34,20 @@ def getwords(html):
 
     reg_words = re.compile(r'[^A-Z^a-z]+')
     sep = re.search(reg_words, html).group()
-    print("sep = {}" % sep)
     words = txt.split(sep)
-    print(words)
 
-    return [word.lower for word in words if word != '']
+    return [word.lower() for word in words if word != '']
 
+def main():
+    """TODO: Docstring for main.
+
+    :arg1: TODO
+    :returns: TODO
+
+    """
+    url = 'https://www.archlinux.org/feeds/'
+    arch_feeds = Archlinux_feeds()
+    arch_feeds.feeds = url
+    urls = arch_feeds.feeds
+    for i in urls:
+        print(i)
