@@ -1,6 +1,13 @@
 #!/bin/python
 # -*- coding: utf-8 -*-
 import numpy as np
+import importlib.util
+
+#import Perceptron class from previous file
+spec = importlib.util.spec_from_file_location("perceptron", "../perceptron/perceptron.py")
+perceptron = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(perceptron)
+p = perceptron.Perceptron()
 
 '''
 实现一个正向传播
