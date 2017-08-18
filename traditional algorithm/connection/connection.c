@@ -9,6 +9,7 @@ int quick_find_find(int n, const int * id);
 int quick_union_find(int n, const int * id);
 void quick_union_union(int p, int q, int * id, int id_len);
 void quick_find_union(int p, int q, int * id, int id_len);
+void weighted_quick_union_union(int p, int q, int * id, int * sz, int id_len);
 
 int main(int argc, char const* argv[]){
     const int connections[][2] = {
@@ -19,9 +20,14 @@ int main(int argc, char const* argv[]){
     int * id = NULL;
     int id_len = 10;
     int connections_len = 0;
+    int * sz = NULL;
 
     GET_ARRAY_LEN(connections_len, connections);
+    sz = (int *)malloc(sizeof(int) * connections_len);
 
+    for (int i = 0;i < connections_len; i++){
+        sz[i] = 1;
+    }
     printf("Quick find method:\n");
     id = initilize_id_array();
     for (int i = 0; i < connections_len; i++) {
@@ -38,7 +44,7 @@ int main(int argc, char const* argv[]){
     }
     free(id);
 
-    printf("Quick union method:\n");
+    printf("weighted quick union method:\n");
     id = initilize_id_array();
     for (int i = 0; i < connections_len; i++) {
         printf("%02d:", i + 1);
@@ -96,4 +102,21 @@ void quick_union_union(int p, int q, int * id, int id_len){
     }
     printf("%d %d\n", p, q);
     id[p_root] = q_root; 
+}
+
+void weighted_quick_union_union(int p, int q, int * id, int * sz, int id_len){
+    int p_root = quick_union_find(p, id);
+    int q_root = quick_union_find(q, id);
+    if (p_root == q_root) {
+        printf("\n");
+        return;
+    }
+    printf("%d %d\n", p, q);
+    if (sz[p_root] < sz[q_root]) {
+        id[q_root] = id[p_root];
+        sz[q_root] += sz[p_root];
+    } else {
+        id[p_root] = id[q_root];
+        sz[q_root] += sz[p_root];
+    }
 }
