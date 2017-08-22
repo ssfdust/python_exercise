@@ -29,10 +29,11 @@ weights_hidden_output = np.random.normal(scale=1 / n_features ** .5,
 for e in range(epochs):
     del_w_input_hidden = np.zeros(weights_input_hidden.shape)
     del_w_hidden_output = np.zeros(weights_hidden_output.shape)
-    show = True
     for x, y in zip(features.values, targets):
         ## Forward pass ##
         # TODO: Calculate the output
+        input_nodes, hide_nodes = weights_input_hidden.shape
+        layer_0 = np.zeros((1, input_nodes))
         hidden_input = np.dot(x, weights_input_hidden)
         hidden_output = sigmoid(hidden_input)
 
@@ -49,25 +50,15 @@ for e in range(epochs):
         ## propagate errors to hidden layer
 
         # TODO: Calculate the hidden layer's contribution to the error
-        hidden_error = np.dot(output_error_term, weights_hidden_output)
+        hidden_error = np.dot(output_error_term, weights_hidden_output.T)
         
         # TODO: Calculate the error term for the hidden layer
-        hidden_error_term = hidden_error * 1#hidden_output * (1 - hidden_output)
+        hidden_error_term = hidden_error * hidden_output * (1 - hidden_output)
 
 
         # TODO: Update the change in weights
-        del_w_hidden_output += output_error_term * hidden_output
-        del_w_input_hidden += hidden_error_term * x[:, None]
-
-        # print debug info
-        if e == 10 and show:
-            print('hidden error : %s' % hidden_error.shape)
-            print(output_error_term.shape)
-            print(hidden_error_term.shape)
-            print(x.shape)
-            print(x[:,None])
-            print(hidden_error_term * x[:, None])
-            show = False
+        del_w_hidden_output += np.dot(hidden_output.T, output_error_term)
+        del_w_input_hidden += np.dot(x.T, hidden_error_term.T)
 
     # TODO: Update weights
     weights_input_hidden += learnrate * del_w_input_hidden / n_records
